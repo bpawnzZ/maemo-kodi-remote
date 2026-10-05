@@ -132,7 +132,10 @@ bool RemoteWindow::eventFilter(QObject *watched, QEvent *event) {
         } else if(key == Qt::Key_O) {
           mdl->sendKey("o");
         } else if(key == Qt::Key_Tab) {
-          mdl->sendKey("tab");
+          // return to fullscreen playback (Escape = Back). NOTE: do NOT send
+          // the raw "tab" key -- Kodi's default keymap binds Tab to
+          // ToggleFullScreen, which triggers a resolution-change confirmation.
+          mdl->sendKey("escape");
         } else if(key == Qt::Key_Up) {
           mdl->sendKey("up");
         } else if(key == Qt::Key_Down) {
