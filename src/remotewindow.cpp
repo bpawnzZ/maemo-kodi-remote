@@ -94,15 +94,17 @@ bool RemoteWindow::eventFilter(QObject *watched, QEvent *event) {
 
       if(!inputBoxActive) {
         if(key == Qt::Key_Return || key == Qt::Key_Enter) {
-          mdl->send("Input.Select");
+          // behave like a plugged-in keyboard: Enter maps to the current
+          // window's Select action (video OSD controls, item activation, ...)
+          mdl->sendKey("enter");
         } else if(key == Qt::Key_H) {
-          mdl->send("Input.Left");
+          mdl->sendKey("left");
         } else if(key == Qt::Key_J) {
-          mdl->send("Input.Down");
+          mdl->sendKey("down");
         } else if(key == Qt::Key_K) {
-          mdl->send("Input.Up");
+          mdl->sendKey("up");
         } else if(key == Qt::Key_L) {
-          mdl->send("Input.Right");
+          mdl->sendKey("right");
         } else if(key == Qt::Key_0) {
           mdl->toggleMute();
         } else if(key == Qt::Key_1) {
@@ -124,18 +126,21 @@ bool RemoteWindow::eventFilter(QObject *watched, QEvent *event) {
         } else if(key == Qt::Key_9) {
           mdl->setVolume(100);
         } else if(key == Qt::Key_Backspace) {
-          mdl->send("Input.Back");
+          mdl->sendKey("backspace");
         } else if(key == Qt::Key_I) {
-          mdl->send("Input.Info");
+          mdl->sendKey("i");
+        } else if(key == Qt::Key_O) {
+          mdl->sendKey("o");
+        } else if(key == Qt::Key_Tab) {
+          mdl->sendKey("tab");
         } else if(key == Qt::Key_Up) {
-          mdl->send("Input.Up");
+          mdl->sendKey("up");
         } else if(key == Qt::Key_Down) {
-          mdl->send("Input.Down");
+          mdl->sendKey("down");
         } else if(key == Qt::Key_Left) {
-          mdl->send("Input.Left");
+          mdl->sendKey("left");
         } else if(key == Qt::Key_Right) {
-          mdl->send("Input.Right");
-        } else if(key == Qt::Key_S) {
+          mdl->sendKey("right");
         } else if(key == Qt::Key_Space) {
           emit mdl->showKeyboard();
         }

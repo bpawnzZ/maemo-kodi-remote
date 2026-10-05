@@ -65,7 +65,7 @@ Rectangle {
     }
     ListElement {
         k: "enter"
-        v: "select"
+        v: "select / controls"
         icon: ""
     }
     ListElement {
@@ -76,6 +76,16 @@ Rectangle {
     ListElement {
         k: "i"
         v: "info"
+        icon: ""
+    }
+    ListElement {
+        k: "o"
+        v: "osd"
+        icon: ""
+    }
+    ListElement {
+        k: "tab"
+        v: "back"
         icon: ""
     }
   }

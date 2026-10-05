@@ -7,6 +7,7 @@
 
 #include "lib/utils.h"
 #include "lib/network/httpkodi.h"
+#include "lib/network/eventserver.h"
 
 enum KodiNowPlayingType {
     MOVIE = 0,
@@ -400,6 +401,9 @@ public:
   unsigned int volume = 100;
 
   void send(const QString &cmd);
+  // Raw keyboard passthrough: delivers a key to Kodi's EventServer exactly as a
+  // physically attached keyboard would (routed through Kodi's keymaps).
+  Q_INVOKABLE void sendKey(const QString &keyname);
   Q_INVOKABLE void sendText(QString msg);
 
   Q_INVOKABLE QString urlRPC() {
@@ -516,4 +520,6 @@ private:
 
   HttpKodi *m_httpNowPlaying;
   QTimer *m_nowPlayingTimer;
+
+  EventServer *m_eventServer;
 };

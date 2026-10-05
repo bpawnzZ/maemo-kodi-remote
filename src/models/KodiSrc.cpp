@@ -70,6 +70,13 @@ KodiSrc::KodiSrc(const QString &name, const QString &address, const QString &sch
   m_nowPlayingTimer->setInterval(m_nowPlayingInterval);
   m_nowPlayingTimer->start();
 
+  // raw keyboard passthrough (EventServer UDP :9777) -- mirrors a real keyboard
+  m_eventServer = new EventServer(this);
+  m_eventServer->setAddress(address);
+  connect(this, &KodiSrc::kodiURLChanged, [this](QString, QString, QString) {
+    m_eventServer->setAddress(this->address);
+  });
+
   if(this->name.isEmpty())
     this->name = QString("%1:%2").arg(address, QString::number(port));
 }
@@ -77,6 +84,11 @@ KodiSrc::KodiSrc(const QString &name, const QString &address, const QString &sch
 void KodiSrc::send(const QString &cmd) {
   qDebug() << "send" << cmd;
   m_http->post(QString("send.%1").arg(cmd), cmd, QJsonObject());
+}
+
+void KodiSrc::sendKey(const QString &keyname) {
+  qDebug() << "sendKey" << keyname;
+  m_eventServer->sendKey(keyname);
 }
 
 void KodiSrc::sendText(QString msg) {
