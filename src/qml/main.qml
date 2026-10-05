@@ -60,12 +60,12 @@ Rectangle {
     }
     ListElement {
         k: "backspace"
-        v: "return"
+        v: "back"
         icon: ""
     }
     ListElement {
         k: "enter"
-        v: "select / controls"
+        v: "osd controls"
         icon: ""
     }
     ListElement {

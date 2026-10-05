@@ -93,24 +93,22 @@ bool RemoteWindow::eventFilter(QObject *watched, QEvent *event) {
       }
 
       if(!inputBoxActive) {
-        // Every navigation key is sent as a RAW keyboard event via Kodi's
-        // EventServer, so it is processed by Kodi's keymaps exactly as if a
-        // physical keyboard were plugged in. No semantic JSON-RPC actions are
-        // used here -- those bypass the keymap and behave differently (e.g.
-        // skipping through the OSD instead of navigating it).
-        //
-        // Kodi keynames (see kodi.wiki/view/List_of_keynames):
-        //   return = VK_RETURN (main Enter), enter = VK_SEPARATOR (numpad).
+        // Input keys are sent as Kodi "actions" (Input.ExecuteAction) rather
+        // than raw keys. Actions are routed to the currently focused Kodi
+        // window, so they navigate the OSD (or lists) the way a keyboard
+        // would, and -- unlike raw EventServer keys -- they are NOT remapped
+        // by the user's own keyboard.xml.
         if(key == Qt::Key_Return || key == Qt::Key_Enter) {
-          mdl->sendKey("return");
+          // bring up the OSD controls bar (plain "select" is play/pause here)
+          mdl->executeAction("osd");
         } else if(key == Qt::Key_H) {
-          mdl->sendKey("left");
+          mdl->executeAction("left");
         } else if(key == Qt::Key_J) {
-          mdl->sendKey("down");
+          mdl->executeAction("down");
         } else if(key == Qt::Key_K) {
-          mdl->sendKey("up");
+          mdl->executeAction("up");
         } else if(key == Qt::Key_L) {
-          mdl->sendKey("right");
+          mdl->executeAction("right");
         } else if(key == Qt::Key_0) {
           mdl->toggleMute();
         } else if(key == Qt::Key_1) {
@@ -132,21 +130,23 @@ bool RemoteWindow::eventFilter(QObject *watched, QEvent *event) {
         } else if(key == Qt::Key_9) {
           mdl->setVolume(100);
         } else if(key == Qt::Key_Backspace) {
-          mdl->sendKey("backspace");
+          mdl->executeAction("back");
         } else if(key == Qt::Key_I) {
-          mdl->sendKey("i");
+          mdl->executeAction("info");
         } else if(key == Qt::Key_O) {
-          mdl->sendKey("o");
+          mdl->executeAction("playerprocessinfo");
         } else if(key == Qt::Key_Tab) {
-          mdl->sendKey("tab");
+          // return to the playing fullscreen video (NOT togglefullscreen,
+          // which prompts a resolution change)
+          mdl->executeAction("fullscreen");
         } else if(key == Qt::Key_Up) {
-          mdl->sendKey("up");
+          mdl->executeAction("up");
         } else if(key == Qt::Key_Down) {
-          mdl->sendKey("down");
+          mdl->executeAction("down");
         } else if(key == Qt::Key_Left) {
-          mdl->sendKey("left");
+          mdl->executeAction("left");
         } else if(key == Qt::Key_Right) {
-          mdl->sendKey("right");
+          mdl->executeAction("right");
         } else if(key == Qt::Key_Space) {
           emit mdl->showKeyboard();
         }

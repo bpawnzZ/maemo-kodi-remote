@@ -86,6 +86,13 @@ void KodiSrc::send(const QString &cmd) {
   m_http->post(QString("send.%1").arg(cmd), cmd, QJsonObject());
 }
 
+void KodiSrc::executeAction(const QString &action) {
+  qDebug() << "executeAction" << action;
+  QJsonObject params;
+  params["action"] = action;
+  m_http->post(QString("executeAction.%1").arg(action), "Input.ExecuteAction", params);
+}
+
 void KodiSrc::sendKey(const QString &keyname) {
   qDebug() << "sendKey" << keyname;
   m_eventServer->sendKey(keyname);

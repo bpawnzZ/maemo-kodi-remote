@@ -401,8 +401,13 @@ public:
   unsigned int volume = 100;
 
   void send(const QString &cmd);
-  // Raw keyboard passthrough: delivers a key to Kodi's EventServer exactly as a
-  // physically attached keyboard would (routed through Kodi's keymaps).
+  // Execute a Kodi built-in input action (see the Input.Action enum), e.g.
+  // "osd", "up", "select", "back", "fullscreen". This is routed to the
+  // currently focused Kodi window and is independent of the user's keymap, so
+  // it reproduces the intended keyboard behaviour deterministically.
+  Q_INVOKABLE void executeAction(const QString &action);
+  // Raw keyboard passthrough via the EventServer (routed through Kodi's
+  // keymaps, i.e. subject to the user's keyboard.xml).
   Q_INVOKABLE void sendKey(const QString &keyname);
   Q_INVOKABLE void sendText(QString msg);
 
