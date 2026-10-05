@@ -404,9 +404,6 @@ public:
   // Raw keyboard passthrough: delivers a key to Kodi's EventServer exactly as a
   // physically attached keyboard would (routed through Kodi's keymaps).
   Q_INVOKABLE void sendKey(const QString &keyname);
-  // Execute a Kodi built-in player action, e.g. "FullScreen" (jump back into
-  // the playing video) -- the same action a physical Tab key performs.
-  Q_INVOKABLE void executeAction(const QString &action);
   Q_INVOKABLE void sendText(QString msg);
 
   Q_INVOKABLE QString urlRPC() {

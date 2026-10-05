@@ -93,10 +93,16 @@ bool RemoteWindow::eventFilter(QObject *watched, QEvent *event) {
       }
 
       if(!inputBoxActive) {
+        // Every navigation key is sent as a RAW keyboard event via Kodi's
+        // EventServer, so it is processed by Kodi's keymaps exactly as if a
+        // physical keyboard were plugged in. No semantic JSON-RPC actions are
+        // used here -- those bypass the keymap and behave differently (e.g.
+        // skipping through the OSD instead of navigating it).
+        //
+        // Kodi keynames (see kodi.wiki/view/List_of_keynames):
+        //   return = VK_RETURN (main Enter), enter = VK_SEPARATOR (numpad).
         if(key == Qt::Key_Return || key == Qt::Key_Enter) {
-          // behave like a plugged-in keyboard: Enter maps to the current
-          // window's Select action (video OSD controls, item activation, ...)
-          mdl->sendKey("enter");
+          mdl->sendKey("return");
         } else if(key == Qt::Key_H) {
           mdl->sendKey("left");
         } else if(key == Qt::Key_J) {
@@ -132,11 +138,7 @@ bool RemoteWindow::eventFilter(QObject *watched, QEvent *event) {
         } else if(key == Qt::Key_O) {
           mdl->sendKey("o");
         } else if(key == Qt::Key_Tab) {
-          // toggle between browsing the Kodi menu and the playing video:
-          // "FullScreen" jumps back into the fullscreen video, exactly like
-          // pressing Tab on a physical keyboard. (Do NOT use ToggleFullScreen,
-          // which prompts a resolution-change confirmation.)
-          mdl->executeAction("FullScreen");
+          mdl->sendKey("tab");
         } else if(key == Qt::Key_Up) {
           mdl->sendKey("up");
         } else if(key == Qt::Key_Down) {

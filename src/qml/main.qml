@@ -85,7 +85,7 @@ Rectangle {
     }
     ListElement {
         k: "tab"
-        v: "menu / fullscreen"
+        v: "fullscreen video"
         icon: ""
     }
   }
