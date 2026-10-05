@@ -85,7 +85,7 @@ Rectangle {
     }
     ListElement {
         k: "tab"
-        v: "back / fullscreen"
+        v: "menu / fullscreen"
         icon: ""
     }
   }
