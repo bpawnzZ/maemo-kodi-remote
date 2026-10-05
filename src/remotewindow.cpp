@@ -99,8 +99,9 @@ bool RemoteWindow::eventFilter(QObject *watched, QEvent *event) {
         // would, and -- unlike raw EventServer keys -- they are NOT remapped
         // by the user's own keyboard.xml.
         if(key == Qt::Key_Return || key == Qt::Key_Enter) {
-          // bring up the OSD controls bar (plain "select" is play/pause here)
-          mdl->executeAction("osd");
+          // keyboard-like Enter: opens the OSD if closed, otherwise activates
+          // the focused OSD control (see KodiSrc::enterAction)
+          mdl->enterAction();
         } else if(key == Qt::Key_H) {
           mdl->executeAction("left");
         } else if(key == Qt::Key_J) {
@@ -134,7 +135,8 @@ bool RemoteWindow::eventFilter(QObject *watched, QEvent *event) {
         } else if(key == Qt::Key_I) {
           mdl->executeAction("info");
         } else if(key == Qt::Key_O) {
-          mdl->executeAction("playerprocessinfo");
+          // explicit OSD toggle (so the controls bar can also be dismissed)
+          mdl->executeAction("osd");
         } else if(key == Qt::Key_Tab) {
           // return to the playing fullscreen video (NOT togglefullscreen,
           // which prompts a resolution change)
