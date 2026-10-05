@@ -103,13 +103,13 @@ bool RemoteWindow::eventFilter(QObject *watched, QEvent *event) {
           // the focused OSD control (see KodiSrc::enterAction)
           mdl->enterAction();
         } else if(key == Qt::Key_H) {
-          mdl->executeAction("left");
+          mdl->navAction("left");
         } else if(key == Qt::Key_J) {
-          mdl->executeAction("down");
+          mdl->navAction("down");
         } else if(key == Qt::Key_K) {
-          mdl->executeAction("up");
+          mdl->navAction("up");
         } else if(key == Qt::Key_L) {
-          mdl->executeAction("right");
+          mdl->navAction("right");
         } else if(key == Qt::Key_0) {
           mdl->toggleMute();
         } else if(key == Qt::Key_1) {
@@ -142,13 +142,13 @@ bool RemoteWindow::eventFilter(QObject *watched, QEvent *event) {
           // which prompts a resolution change)
           mdl->executeAction("fullscreen");
         } else if(key == Qt::Key_Up) {
-          mdl->executeAction("up");
+          mdl->navAction("up");
         } else if(key == Qt::Key_Down) {
-          mdl->executeAction("down");
+          mdl->navAction("down");
         } else if(key == Qt::Key_Left) {
-          mdl->executeAction("left");
+          mdl->navAction("left");
         } else if(key == Qt::Key_Right) {
-          mdl->executeAction("right");
+          mdl->navAction("right");
         } else if(key == Qt::Key_Space) {
           emit mdl->showKeyboard();
         }

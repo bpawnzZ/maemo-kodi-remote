@@ -406,11 +406,12 @@ public:
   // currently focused Kodi window and is independent of the user's keymap, so
   // it reproduces the intended keyboard behaviour deterministically.
   Q_INVOKABLE void executeAction(const QString &action);
-  // Enter key: behaves like a keyboard. If the fullscreen OSD is already open
-  // it activates the focused OSD control ("select"); otherwise it opens the
-  // OSD ("osd" toggles, so blindly sending it would close an open OSD).
+  // Context-aware keys: they query the current Kodi window and dispatch the
+  // action a physical keyboard would produce in that context. dir is one of
+  // "up", "down", "left", "right".
   Q_INVOKABLE void enterAction();
-  void onEnterStateFinished(const QJsonDocument &response);
+  Q_INVOKABLE void navAction(const QString &dir);
+  void onContextStateFinished(const QJsonDocument &response);
   // Raw keyboard passthrough via the EventServer (routed through Kodi's
   // keymaps, i.e. subject to the user's keyboard.xml).
   Q_INVOKABLE void sendKey(const QString &keyname);
@@ -531,7 +532,8 @@ private:
   HttpKodi *m_httpNowPlaying;
   QTimer *m_nowPlayingTimer;
 
-  HttpKodi *m_httpEnter;
+  HttpKodi *m_httpContext;
+  QString m_pendingKey;
 
   EventServer *m_eventServer;
 };

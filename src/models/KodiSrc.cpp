@@ -77,12 +77,13 @@ KodiSrc::KodiSrc(const QString &name, const QString &address, const QString &sch
     m_eventServer->setAddress(this->address);
   });
 
-  // enter key: needs the current window to decide between "osd" and "select"
-  m_httpEnter = new HttpKodi("m_httpEnter", this->urlRPC());
-  connect(this, &KodiSrc::kodiURLChanged, m_httpEnter, &HttpKodi::onUrlChanged);
-  m_httpEnter->setCredentials(username, password);
-  connect(m_httpEnter, &HttpKodi::requestComplete, this, &KodiSrc::onEnterStateFinished);
-  connect(m_httpEnter, &HttpKodi::requestFailed, this, &KodiSrc::onPongFailed);
+  // context-aware keys (Enter / arrows): need the current window to pick the
+  // right action, like a physical keyboard would
+  m_httpContext = new HttpKodi("m_httpContext", this->urlRPC());
+  connect(this, &KodiSrc::kodiURLChanged, m_httpContext, &HttpKodi::onUrlChanged);
+  m_httpContext->setCredentials(username, password);
+  connect(m_httpContext, &HttpKodi::requestComplete, this, &KodiSrc::onContextStateFinished);
+  connect(m_httpContext, &HttpKodi::requestFailed, this, &KodiSrc::onPongFailed);
 
   if(this->name.isEmpty())
     this->name = QString("%1:%2").arg(address, QString::number(port));
@@ -101,26 +102,49 @@ void KodiSrc::executeAction(const QString &action) {
 }
 
 void KodiSrc::enterAction() {
-  // "osd" is a toggle on Kodi: sending it while the OSD is already open would
-  // CLOSE it. Query the current window first, then either open the OSD or, if
-  // it is already open, activate the focused control -- which is what Enter
-  // does on a physical keyboard.
+  m_pendingKey = "enter";
   QJsonObject params;
   params["properties"] = QJsonArray::fromStringList(QStringList() << "currentwindow");
-  m_httpEnter->post("enterState", "GUI.GetProperties", params);
+  m_httpContext->post("contextState", "GUI.GetProperties", params);
 }
 
-void KodiSrc::onEnterStateFinished(const QJsonDocument &response) {
+void KodiSrc::navAction(const QString &dir) {
+  m_pendingKey = dir;
+  QJsonObject params;
+  params["properties"] = QJsonArray::fromStringList(QStringList() << "currentwindow");
+  m_httpContext->post("contextState", "GUI.GetProperties", params);
+}
+
+void KodiSrc::onContextStateFinished(const QJsonDocument &response) {
   auto obj = response.object();
   if(!obj.contains("id") || !obj.contains("result"))
     return;
 
-  const int osdWindowId = 12901; // "Fullscreen OSD"
+  const int osdWindowId       = 12901; // "Fullscreen OSD"
+  const int fullscreenVideoId = 12005; // "Fullscreen video"
   auto win = obj["result"].toObject()["currentwindow"].toObject();
-  if(win["id"].toInt() == osdWindowId)
-    executeAction("select"); // OSD is open: activate the focused control
-  else
-    executeAction("osd");    // OSD is closed: open it
+  const int winId = win["id"].toInt();
+  const QString key = m_pendingKey;
+
+  if(key == "enter") {
+    // In a menu/list Enter activates the selected item; in fullscreen video
+    // with the OSD closed it opens the OSD bar; with the OSD open it activates
+    // the focused OSD control.
+    if(winId == fullscreenVideoId)
+      executeAction("osd");
+    else
+      executeAction("select");
+  } else if(key == "left" || key == "right") {
+    // In fullscreen video with the OSD closed, left/right seek the video;
+    // everywhere else they move the selection.
+    if(winId == fullscreenVideoId)
+      executeAction(key == "left" ? "stepback" : "stepforward");
+    else
+      executeAction(key);
+  } else {
+    // up/down always move the selection (navigate OSD or list).
+    executeAction(key);
+  }
 }
 
 void KodiSrc::sendKey(const QString &keyname) {
