@@ -80,7 +80,7 @@ Rectangle {
     }
     ListElement {
         k: "o"
-        v: "osd"
+        v: "player info"
         icon: ""
     }
     ListElement {

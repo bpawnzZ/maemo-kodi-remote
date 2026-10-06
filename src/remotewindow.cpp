@@ -135,8 +135,9 @@ bool RemoteWindow::eventFilter(QObject *watched, QEvent *event) {
         } else if(key == Qt::Key_I) {
           mdl->executeAction("info");
         } else if(key == Qt::Key_O) {
-          // explicit OSD toggle (so the controls bar can also be dismissed)
-          mdl->executeAction("osd");
+          // player process info: codec / hardware decoding / resolution overlay
+          // (what "o" does on a standard Kodi keyboard)
+          mdl->executeAction("playerprocessinfo");
         } else if(key == Qt::Key_Tab) {
           // return to the playing fullscreen video (NOT togglefullscreen,
           // which prompts a resolution change)
